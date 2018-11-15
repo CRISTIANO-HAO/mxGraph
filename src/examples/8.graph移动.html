@@ -1,0 +1,126 @@
+<html>
+
+<head>
+  <style type="text/css">
+    #main {
+      position: absolute;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+      right: 0px;
+      top: 0px;
+      bottom: 0px;
+      overflow: hidden;
+    }
+
+    .geDiagramContainer {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Init.js"></script>
+  <script type="text/javascript" src="../../plugin/mxGraph/jscolor/jscolor.js"></script>
+  <script type="text/javascript" src="../../plugin/mxGraph/sanitizer/sanitizer.min.js"></script>
+  <script type="text/javascript" src="../../plugin/mxGraph/js/mxClient.js"></script>
+
+  <script type="text/javascript" src="../../plugin/modelgraph/model/EditorUi.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Editor.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Sidebar.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Graph.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Shapes.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Actions.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Menus.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Format.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Toolbar.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Dialogs.js"></script>
+</head>
+
+<body>
+  <div id="main"></div>
+
+  <script type="text/javascript">
+    // 请求路径
+    let filePath = './xml/model.xml'
+    // let filePath = './xml/data.xml'
+    // let filePath = './xml/8.xml'
+    // 获取graph容器
+    let container = document.getElementById('main')
+    // 异步加载xml，返回mxXmlRequest对象
+    mxUtils.get(filePath, onload, onerror)
+
+    function onload(req) {
+      if (req.request.status !== 200) {
+        return
+      }
+
+      mxResources.loadDefaultBundle = false;
+      let bundle = mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage) || mxResources.getSpecialBundle(
+        RESOURCE_BASE, mxLanguage);
+
+      mxUtils.getAll([bundle, STYLE_PATH + '/default.xml'], function (xhr) {
+        let themes = new Object();
+        themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement();
+
+        // Main
+        let editor = new Editor(true, themes);
+        editorUI = new EditorUi(editor, container);
+
+        let root = req.getDocumentElement();
+        let dec = new mxCodec(root.ownerDocument);
+        let model = dec.decode(root, editorUI.editor.graph.getModel());
+        let graph = editorUI.editor.graph;
+
+        moveGraph(graph)
+
+      }, function () {
+        mxLog.show()
+        mxLog.warn('url is wrong!')
+      });
+    }
+    
+    // 移动graph
+    function moveGraph(graph) {
+      let view = graph.view
+      let cells = getCellsArr(graph.getModel().cells)
+
+      // 监听resize事件
+      graph.addListener(mxEvent.SIZE, function () {
+        console.log('size change')
+      })
+
+      // 设置scale，值为1时是100%
+      view.setScale(1.5)
+
+      let index = 0
+      let timer = setInterval(function () {
+        while (!cells[index].isVertex()) {
+          index++
+        }
+        let cell = cells[index]
+        let x = cell.geometry.x
+        let y = cell.geometry.y
+        view.setTranslate(50 - x, 50 - y)
+        graph.setCellStyles('strokeColor', 'red', [cell])
+        if (index >= cells.length - 1) {
+          clearInterval(timer)
+          setTimeout(function () {
+            graph.setCellStyles('strokeColor', '', cells)
+            view.setTranslate(0, 0)
+          })
+        } else {
+          index++
+        }
+      }, 200)
+    }
+
+    function getCellsArr(cells) {
+      let arr = []
+      for (let key in cells) {
+        arr.push(cells[key])
+      }
+      return arr
+    }
+  </script>
+</body>
+
+</html>

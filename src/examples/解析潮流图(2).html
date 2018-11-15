@@ -1,0 +1,93 @@
+<html>
+
+<head>
+  <style type="text/css">
+    #main {
+      position: absolute;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+      right: 0px;
+      top: 0px;
+      bottom: 0px;
+      overflow: hidden;
+    }
+
+    .geDiagramContainer {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Init.js"></script>
+  <script type="text/javascript" src="../../plugin/mxGraph/jscolor/jscolor.js"></script>
+  <script type="text/javascript" src="../../plugin/mxGraph/sanitizer/sanitizer.min.js"></script>
+  <script type="text/javascript" src="../../plugin/mxGraph/js/mxClient.js"></script>
+
+  <script type="text/javascript" src="../../plugin/modelgraph/model/EditorUi.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Editor.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Sidebar.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Graph.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Shapes.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Actions.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Menus.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Format.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Toolbar.js"></script>
+  <script type="text/javascript" src="../../plugin/modelgraph/model/Dialogs.js"></script>
+</head>
+
+<body>
+  <div id="main"></div>
+
+  <script type="text/javascript">
+    // 请求路径
+    // let filePath = './xml/normal.xml'
+    // let filePath = './xml/normal_format.xml'
+    // let filePath = './xml/base.xml'
+    // let filePath = './xml/5.xml'
+    // let filePath = './xml/6.xml'
+    // let filePath = './xml/7.xml'
+    let filePath = './xml/8.xml'
+    // let filePath = './xml/test.xml'
+    // let filePath = './xml/index.xml'
+    // let filePath = './xml/model.xml'
+    // 获取graph容器
+    let container = document.getElementById('main')
+    // 异步加载xml，返回mxXmlRequest对象
+    mxUtils.get(filePath, onload, onerror)
+
+    function onload(req) {
+      if (req.request.status !== 200) {
+        return
+      }
+
+      let editorUiInit = EditorUi.prototype.init;
+      EditorUi.prototype.init = function () {
+        editorUiInit.apply(this, arguments);
+      };
+
+      mxResources.loadDefaultBundle = false;
+      let bundle = mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage) || mxResources.getSpecialBundle(
+        RESOURCE_BASE, mxLanguage);
+      mxUtils.getAll([bundle, STYLE_PATH + '/default.xml'], function (xhr) {
+        mxResources.parse(xhr[0].getText());
+        let themes = new Object();
+        themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement();
+
+        // Main
+        let editor = new Editor(true, themes);
+        editorUI = new EditorUi(editor, container);
+
+        let root = req.getDocumentElement();
+        let dec = new mxCodec(root.ownerDocument);
+        let model = dec.decode(root, editorUI.editor.graph.getModel());
+
+
+      }, function () {
+        mxLog.show()
+        mxLog.warn('url is wrong!')
+      });
+    }
+  </script>
+</body>
+
+</html>

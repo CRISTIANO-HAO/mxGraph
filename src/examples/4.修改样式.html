@@ -1,0 +1,90 @@
+<html>
+
+<head>
+  <script type="text/javascript">
+    mxBasePath = '../../plugin/mxgraph'
+  </script>
+  <script type="text/javascript" src="../../plugin/mxgraph/js/mxClient.js"></script>
+</head>
+
+<body>
+  <div id="main"></div>
+
+  <script type="text/javascript">
+    // 请求路径
+    let filePath = './xml/normal.xml'
+    // 获取graph容器
+    let container = document.getElementById('main')
+    // 异步加载xml，返回mxXmlRequest对象
+    mxUtils.get(filePath, onload, onerror)
+
+    function onload(req) {
+      if (req.request.status !== 200) {
+        return
+      }
+      // Returns the document element of the response XML document
+      const root = req.getDocumentElement()
+      // Constructs an XML encoder/decoder for the specified owner document
+      const dec = new mxCodec(root.ownerDocument)
+      // Decodes the given XML node, return mxGraphModel instance
+      const model = dec.decode(root)
+      let graph = new mxGraph(container, model, null, null)
+      // Specifies if the graph should allow any interactions
+      graph.setEnabled(false);
+
+      // 获取 model
+      // The graph model acts as a wrapper around the cells which are in charge of storing the actual graph datastructure.
+      let cellModel = graph.getModel()
+
+      // 获取 mxCell
+      // Cells are the elements of the graph model.  They represent the state of the groups, vertices and edges in a graph.
+      let cells = cellModel.cells
+
+
+      /*
+        通过mxConstants下面的属性找到对应的样式属性名，例如mxConstants.STYLE_STROKECOLOR，
+        找到对应的样式属性为strokeColor，然后通过'key=value;'的形式进行样式的直接修改
+      */
+
+      // 修改全局默认样式
+      let defaultStyle = graph.getStylesheet().getDefaultVertexStyle();
+      console.log(defaultStyle)
+      defaultStyle[mxConstants.STYLE_ROUNDED] = true;
+      defaultStyle[mxConstants.STYLE_FILLCOLOR] = 'red';
+      defaultStyle[mxConstants.STYLE_STROKEWIDTH] = '10';
+      // graph.getStylesheet().putDefaultVertexStyle(defaultStyle)
+      graph.refresh()
+
+
+
+      //直接修改样式
+      // 箭头
+      cellModel.setStyle(cellModel.getCell(cellModel.nextId - 1), 'strokeWidth=20;strokeColor=#888555;')
+
+
+      //间接修改样式
+      let style = {};
+      style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CLOUD;
+      // style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
+      style[mxConstants.STYLE_STROKECOLOR] = 'gray';
+      style[mxConstants.STYLE_FONTCOLOR] = 'black';
+      style[mxConstants.STYLE_FILLCOLOR] = '#c9d615';
+      style[mxConstants.STYLE_GRADIENTCOLOR] = 'white';
+
+
+      // 注册全局自定义样式
+      // 云状
+      graph.getStylesheet().putCellStyle('diffCSS', style)
+      cellModel.setStyle(cellModel.getCell(cellModel.nextId - 3), 'diffCSS')
+
+
+      // 还可以通过mxGraph.prototype.setCellStyles进行样式的修改
+      // 椭圆
+      graph.setCellStyles('strokeWidth', 30, [cells[5]])
+      graph.setCellStyles('strokeColor', '#000000', [cells[5]])
+      graph.setCellStyles('shape', 'ellipse', [cells[5]])
+    }
+  </script>
+</body>
+
+</html>

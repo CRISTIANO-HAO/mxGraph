@@ -1,0 +1,106 @@
+<html>
+
+<head>
+  <style type="text/css">
+    #main {
+      position: absolute;
+      left: 0px;
+      width: 10000px;
+      height: 10000px;
+      right: 0px;
+      top: 0px;
+      bottom: 0px;
+      overflow: scroll;
+    }
+  </style>
+  <script type="text/javascript">
+    let STENCIL_PATH = 'stencils';
+    let IMAGE_PATH = 'images';
+    let STYLE_PATH = 'styles';
+
+    let urlParams = (function (url) {
+      let result = new Object();
+      let idx = url.lastIndexOf('?');
+
+      if (idx > 0) {
+        let params = url.substring(idx + 1).split('&');
+
+        for (let i = 0; i < params.length; i++) {
+          idx = params[i].indexOf('=');
+
+          if (idx > 0) {
+            result[params[i].substring(0, idx)] = params[i].substring(idx + 1);
+          }
+        }
+      }
+
+      return result;
+    })(window.location.href);
+
+    let mxLoadResources = false;
+    let mxBasePath = '../../plugin/mxgraph'
+  </script>
+  <!-- <script type="text/javascript" src="sanitizer/sanitizer.min.js"></script>
+  <script type="text/javascript" src="../../plugin/mxgraph/js/mxClient.js"></script>
+  <script type="text/javascript" src="js/Graph.js"></script>
+  <script type="text/javascript" src="js/Shapes.js"></script> -->
+  <script type="text/javascript" src="../../plugin/mxGraph/sanitizer/sanitizer.min.js"></script>
+  <script type="text/javascript" src="../../plugin/mxGraph/js/mxClient.js"></script>
+  <script type="text/javascript" src="../../plugin/mxGraph/js/Graph.js"></script>
+  <script type="text/javascript" src="../../plugin/mxGraph/js/Shapes.js"></script>
+</head>
+
+<body>
+  <div id="main"></div>
+
+  <script type="text/javascript">
+    // 请求路径
+    // let filePath = './xml/normal.xml'
+    // let filePath = './xml/normal_format.xml'
+    // let filePath = './xml/base.xml'
+    let filePath = './xml/5.xml'
+    // let filePath = './xml/6.xml'
+    // let filePath = './xml/7.xml'
+    // let filePath = './xml/test.xml'
+    // let filePath = './xml/index.xml'
+    // let filePath = './xml/model.xml'
+    // 获取graph容器
+    let container = document.getElementById('main')
+    // 异步加载xml，返回mxXmlRequest对象
+    mxUtils.get(filePath, onload, onerror)
+
+    // function onload(req){
+    //   if(req.request.status !== 200){ return }
+    //   // Returns the document element of the response XML document
+    //   const root = req.getDocumentElement()
+    //   // Constructs an XML encoder/decoder for the specified owner document
+    //   // Decodes the given XML node, return mxGraphModel instance
+    //   const dec = new mxCodec(root.ownerDocument)
+    //   const model = dec.decode(root) 
+
+    //   let graph = new mxGraph(container,model,null,null)
+    //   //graph.setHtmlLabels(true);
+    //   // Specifies if the graph should allow any interactions
+    //   graph.setEnabled(false);
+    // }
+
+    function onload(req) {
+      if (req.request.status !== 200) {
+        return
+      }
+
+      let graph = new Graph(container)
+      //graph.setHtmlLabels(true);
+      // Specifies if the graph should allow any interactions
+      graph.setEnabled(false);
+
+      let xmlDoc = mxUtils.parseXml(req.request.responseText);
+      let codec = new mxCodec(xmlDoc);
+      codec.decode(xmlDoc.documentElement, graph.getModel());
+    }
+
+    
+  </script>
+</body>
+
+</html>

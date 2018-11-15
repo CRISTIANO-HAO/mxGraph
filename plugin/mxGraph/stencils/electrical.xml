@@ -1,0 +1,698 @@
+<shapes name="mxGraph.electrical">
+
+    <shape aspect='variable' w='38' h='50' name='机组' id='sgd_fdj1' strokewidth='inherit'>
+        <foreground>
+            <path>
+                <move x='19' y='4'/>
+                <line x='19' y='14'/>
+            </path>
+            <fillstroke/>
+            <ellipse x='3.0' y='14.0' h='32.0' w='32.0'/>
+            <stroke/>
+            <path>
+                <move x='3.0' y='30.0'/>
+                <arc x='19.0' y='30.0' rx='8' ry='8' sweep-flag='1' x-axis-rotation='0' large-arc-flag='0'/>
+            </path>
+            <fillstroke/>
+            <path>
+                <move x='19.0' y='30.0'/>
+                <arc x='35.0' y='30.0' rx='8' ry='8' sweep-flag='0' x-axis-rotation='0' large-arc-flag='0'/>
+            </path>
+            <fillstroke/>
+            <fillcolor color="#000" />
+            <ellipse x='17.0' y='4.0' h='4.0' w='4.0' />
+            <fillstroke/>
+        </foreground>
+        <connections>
+            <constraint name='0' perimeter='2' x='0.5' y='0.11'/>
+        </connections>
+    </shape>
+
+    <shape aspect="variable" h="40" name="用户" strokewidth="inherit" w="10">
+        <connections>
+            <constraint name="in" perimeter="0" x="0.5" y="0.05"/>
+        </connections>
+        <foreground>
+            <path>
+                <move x="5" y="4"/>
+                <line x="5" y="40"/>
+                <move x="0" y="30"/>
+                <line x="5" y="40"/>
+                <line x="10" y="30"/>
+                <move x="0" y="25"/>
+                <line x="5" y="35"/>
+                <line x="10" y="25"/>
+            </path>
+            <stroke/>
+            <fillcolor color="#000" />
+            <ellipse x='3' y='0' h='4.0' w='4.0' />
+            <fillstroke/>
+        </foreground>
+    </shape>
+
+    <shape name="节点" h="5" w="120" aspect="variable" strokewidth="3" >
+        <foreground>
+            <strokecolor color="#990099" />
+            <path>
+                <move x="0" y="2.5" />
+                <line x="120" y="2.5" />
+            </path>
+            <stroke />
+        </foreground>
+        <connections>
+            <constraint name='0' perimeter='2' x='0.2' y='0.5'/>
+            <constraint name='1' perimeter='2' x='0.4' y='0.5'/>
+            <constraint name='2' perimeter='2' x='0.6' y='0.5'/>
+            <constraint name='3' perimeter='2' x='0.8' y='0.5'/>
+        </connections>
+    </shape>
+
+    <!--<shape aspect='variable' w='16' h='47' name='隔离刀闸' id='sgd_dz1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<ellipse x='3.0' y='2.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='3.0' y='41.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+            <!--<path>-->
+                <!--<move x='5' y='35'/>-->
+                <!--<line x='14' y='15'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<ellipse x='2.0' y='6.0' h='6.0' w='6.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='2.0' y='35.0' h='6.0' w='6.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='2.0' y='6.0' h='6.0' w='6.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='2.0' y='35.0' h='6.0' w='6.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='0' perimeter='2' x='0.3125' y='0.0851063829787234'/>-->
+            <!--<constraint name='1' perimeter='2' x='0.3125' y='0.9148936170212766'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='40' h='62' name='两圈变压器' id='sgd_ljb1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<ellipse x='4.0' y='4.0' h='32.0' w='32.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='18.0' y='4.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='4.0' y='26.0' h='32.0' w='32.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='18.0' y='54.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='0' perimeter='2' x='0.5' y='0.0967741935483871'/>-->
+            <!--<constraint name='1' perimeter='2' x='0.5' y='0.9032258064516129'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='54' h='56' name='三圈变压器' id='sgd_sjb1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<ellipse x='21.0' y='14.0' h='28.0' w='28.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='45.0' y='26.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='5.0' y='5.0' h='28.0' w='28.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='17.0' y='5.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='5.0' y='23.0' h='28.0' w='28.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='17.0' y='47.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='0' perimeter='2' x='0.8703703703703703' y='0.5'/>-->
+            <!--<constraint name='1' perimeter='2' x='0.35185185185185186' y='0.125'/>-->
+            <!--<constraint name='2' perimeter='2' x='0.35185185185185186' y='0.875'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='18' h='36' name='断路器' id='sgd_kg1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<rect x='3' y='4' h='28' w='12'/>-->
+            <!--<stroke/>-->
+            <!--<rect x='3' y='4' h='28' w='12'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='7.0' y='2.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='7.0' y='30.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='0' perimeter='2' x='0.5' y='0.1111111111111111'/>-->
+            <!--<constraint name='1' perimeter='2' x='0.5' y='0.8888888888888888'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+
+    <!--<shape aspect='variable' w='50' h='50' name='接地刀闸' id='sgd_gdcr1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<path>-->
+                <!--<move x='32' y='23'/>-->
+                <!--<line x='41' y='23'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='8' y='20'/>-->
+                <!--<line x='8' y='29'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='5' y='21'/>-->
+                <!--<line x='5' y='26'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='11' y='18'/>-->
+                <!--<line x='11' y='30'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='12' y='23'/>-->
+                <!--<line x='20' y='23'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='20' y='23'/>-->
+                <!--<line x='31' y='12'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<ellipse x='41.0' y='21.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+            <!--<path>-->
+                <!--<move x='32' y='23'/>-->
+                <!--<line x='40' y='23'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='8' y='20'/>-->
+                <!--<line x='8' y='29'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='5' y='21'/>-->
+                <!--<line x='5' y='26'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='11' y='18'/>-->
+                <!--<line x='11' y='30'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='12' y='23'/>-->
+                <!--<line x='20' y='23'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='20' y='23'/>-->
+                <!--<line x='33' y='23'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='null' perimeter='2' x='0.86' y='0.46'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='26' h='40' name='并联电容' id='capacitor_ver_0' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<path>-->
+                <!--<move x='13' y='14'/>-->
+                <!--<line x='13' y='6'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='8' y='35'/>-->
+                <!--<line x='8' y='35'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='4' y='16'/>-->
+                <!--<line x='21' y='16'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='4' y='22'/>-->
+                <!--<line x='21' y='22'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<ellipse x='11.0' y='3.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='0' perimeter='2' x='0.5' y='0.125'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+
+    <!--<shape aspect='variable' w='26' h='40' name='并联电抗' id='sgd_pdk1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<path>-->
+                <!--<move x='5' y='18'/>-->
+                <!--<line x='13' y='18'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='13' y='18'/>-->
+                <!--<line x='13' y='32'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='13' y='10'/>-->
+                <!--<line x='13' y='3'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='8' y='35'/>-->
+                <!--<line x='8' y='35'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='17' y='35'/>-->
+                <!--<line x='17' y='35'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='5' y='32'/>-->
+                <!--<line x='20' y='32'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='5.0' y='18.0'/>-->
+                <!--<arc x='21.0' y='18.0' rx='8' ry='8' sweep-flag='1' x-axis-rotation='0' large-arc-flag='0'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='5.0' y='18.0'/>-->
+                <!--<arc x='21.0' y='18.0' rx='8' ry='8' sweep-flag='1' x-axis-rotation='0' large-arc-flag='0'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<ellipse x='11.0' y='2.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+            <!--<path>-->
+                <!--<move x='7' y='35'/>-->
+                <!--<line x='17' y='35'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='10' y='38'/>-->
+                <!--<line x='16' y='38'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='0' perimeter='2' x='0.5' y='0.1'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='26' h='40' name='串联电容' id='sgd_sdr1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<path>-->
+                <!--<move x='13' y='22'/>-->
+                <!--<line x='13' y='31'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='13' y='14'/>-->
+                <!--<line x='13' y='6'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='8' y='35'/>-->
+                <!--<line x='8' y='35'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='17' y='35'/>-->
+                <!--<line x='17' y='35'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='4' y='16'/>-->
+                <!--<line x='21' y='16'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<ellipse x='10.0' y='3.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+            <!--<path>-->
+                <!--<move x='4' y='22'/>-->
+                <!--<line x='21' y='22'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<ellipse x='10.0' y='30.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='0' perimeter='2' x='0.46153846153846156' y='0.125'/>-->
+            <!--<constraint name='1' perimeter='2' x='0.46153846153846156' y='0.8'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='26' h='34' name='串联电抗' id='sgd_dk620' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<path>-->
+                <!--<move x='5' y='18'/>-->
+                <!--<line x='13' y='18'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='13' y='18'/>-->
+                <!--<line x='13' y='32'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='13' y='10'/>-->
+                <!--<line x='13' y='3'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='8' y='35'/>-->
+                <!--<line x='8' y='35'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='17' y='35'/>-->
+                <!--<line x='17' y='35'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='5.0' y='18.0'/>-->
+                <!--<arc x='21.0' y='18.0' rx='8' ry='8' sweep-flag='1' x-axis-rotation='0' large-arc-flag='0'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='5.0' y='18.0'/>-->
+                <!--<arc x='21.0' y='18.0' rx='8' ry='8' sweep-flag='1' x-axis-rotation='0' large-arc-flag='0'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<ellipse x='11.0' y='2.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='11.0' y='30.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='0' perimeter='2' x='0.5' y='0.11764705882352941'/>-->
+            <!--<constraint name='1' perimeter='2' x='0.5' y='0.9411764705882353'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='18' h='46' name='熔断器' id='sgd_rdq1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<path>-->
+                <!--<move x='2' y='7'/>-->
+                <!--<line x='16' y='7'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='2' y='7'/>-->
+                <!--<line x='9' y='14'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='16' y='7'/>-->
+                <!--<line x='9' y='14'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='16' y='40'/>-->
+                <!--<line x='9' y='33'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='2' y='40'/>-->
+                <!--<line x='9' y='33'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='2' y='40'/>-->
+                <!--<line x='16' y='40'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='9' y='14'/>-->
+                <!--<line x='9' y='33'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='9' y='4'/>-->
+                <!--<line x='9' y='7'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='9' y='40'/>-->
+                <!--<line x='9' y='43'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<ellipse x='7.0' y='1.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='7.0' y='42.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='null' perimeter='2' x='0.5' y='0.06521739130434782'/>-->
+            <!--<constraint name='null' perimeter='2' x='0.5' y='0.9565217391304348'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='26' h='26' name='保护图元' id='sgd_relay_test' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<ellipse x='3.0' y='3.0' h='20.0' w='20.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='2.0' y='2.0' h='20.0' w='20.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='30' h='30' name='工况图元' id='sdg_gk5' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<ellipse x='4.0' y='4.0' h='20.0' w='20.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='4.0' y='4.0' h='20.0' w='20.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='4.0' y='4.0' h='20.0' w='20.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='18' h='18' name='状态图元' id='sgd_state1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<ellipse x='1.0' y='1.0' h='16.0' w='16.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='1.0' y='1.0' h='16.0' w='16.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='1.0' y='1.0' h='16.0' w='16.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='1.0' y='1.0' h='16.0' w='16.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='12' h='40' name='消弧线圈' id='sgd_xhxq1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<path>-->
+                <!--<move x='1.0' y='12.0'/>-->
+                <!--<arc x='9.0' y='12.0' rx='4' ry='4' sweep-flag='1' x-axis-rotation='0' large-arc-flag='0'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='9.0' y='14.0'/>-->
+                <!--<arc x='9.0' y='14.0' rx='0' ry='0' sweep-flag='1' x-axis-rotation='0' large-arc-flag='0'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='1.0' y='28.0'/>-->
+                <!--<arc x='9.0' y='28.0' rx='4' ry='4' sweep-flag='1' x-axis-rotation='0' large-arc-flag='0'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='1.0' y='19.0'/>-->
+                <!--<arc x='9.0' y='19.0' rx='4' ry='4' sweep-flag='1' x-axis-rotation='0' large-arc-flag='0'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='5' y='32'/>-->
+                <!--<line x='5' y='32'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='5' y='32'/>-->
+                <!--<line x='5' y='35'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='2' y='35'/>-->
+                <!--<line x='9' y='35'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='3' y='35'/>-->
+                <!--<line x='1' y='35'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='2' y='37'/>-->
+                <!--<line x='8' y='37'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='3' y='39'/>-->
+                <!--<line x='7' y='39'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='5' y='8'/>-->
+                <!--<line x='5' y='4'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<ellipse x='3.0' y='2.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='null' perimeter='2' x='0.4166666666666667' y='0.1'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='40' h='16' name='避雷器' id='sgd_blq1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<path>-->
+                <!--<move x='28' y='9'/>-->
+                <!--<line x='33' y='9'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<rect x='10' y='5' h='8' w='18'/>-->
+            <!--<stroke/>-->
+            <!--<path>-->
+                <!--<move x='6' y='9'/>-->
+                <!--<line x='10' y='9'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='6' y='5'/>-->
+                <!--<line x='6' y='13'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='38' y='2'/>-->
+                <!--<line x='38' y='2'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='4' y='6'/>-->
+                <!--<line x='4' y='12'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='2' y='7'/>-->
+                <!--<line x='2' y='11'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='18' y='9'/>-->
+                <!--<line x='18' y='9'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='13' y='5'/>-->
+                <!--<line x='13' y='13'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='17' y='5'/>-->
+                <!--<line x='17' y='13'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='20' y='5'/>-->
+                <!--<line x='20' y='13'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='24' y='5'/>-->
+                <!--<line x='24' y='13'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<ellipse x='31.0' y='7.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='null' perimeter='2' x='0.825' y='0.5625'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='30' h='30' name='光字牌' id='sgd_gzp1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<ellipse x='3.0' y='3.0' h='24.0' w='24.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='3.0' y='3.0' h='24.0' w='24.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='66' h='66' name='电压互感器' id='sgd_dyhg1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<ellipse x='23.0' y='22.0' h='40.0' w='40.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='2.0' y='12.0' h='40.0' w='40.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='23.0' y='2.0' h='40.0' w='40.0'/>-->
+            <!--<stroke/>-->
+            <!--<ellipse x='28.0' y='31.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='null' perimeter='2' x='0.45454545454545453' y='0.5'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+    <!--<shape aspect='variable' w='56' h='30' name='电流互感器' id='sgd_dlhg1' strokewidth='inherit'>-->
+        <!--<foreground>-->
+            <!--<path>-->
+                <!--<move x='5' y='14'/>-->
+                <!--<line x='18' y='14'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='31' y='14'/>-->
+                <!--<line x='44' y='14'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='18' y='3'/>-->
+                <!--<line x='18' y='26'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='30' y='3'/>-->
+                <!--<line x='30' y='26'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<ellipse x='3.0' y='12.0' h='4.0' w='4.0'/>-->
+            <!--<stroke/>-->
+            <!--<path>-->
+                <!--<move x='44' y='8'/>-->
+                <!--<line x='44' y='20'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='47' y='9'/>-->
+                <!--<line x='47' y='18'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+            <!--<path>-->
+                <!--<move x='50' y='10'/>-->
+                <!--<line x='50' y='17'/>-->
+            <!--</path>-->
+            <!--<fillstroke/>-->
+        <!--</foreground>-->
+        <!--<connections>-->
+            <!--<constraint name='null' perimeter='2' x='0.08928571428571429' y='0.4666666666666667'/>-->
+        <!--</connections>-->
+    <!--</shape>-->
+
+</shapes>

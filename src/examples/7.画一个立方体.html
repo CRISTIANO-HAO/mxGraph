@@ -1,0 +1,164 @@
+<html>
+<head>
+  <script type="text/javascript">
+    mxBasePath = '../../plugin/mxgraph'
+  </script>
+  <script type="text/javascript" src="../../plugin/mxgraph/js/mxClient.js"></script>
+</head>
+
+<body>
+  <div id="main"></div>
+
+  <!-- Example custom shape -->
+  <script type="text/javascript">
+    /*
+        The example shape is a "3D box" that looks like this:
+                    ____
+                    /   /|
+                  /___/ |
+                  |   | /
+                  |___|/
+                            
+          The code below defines the shape. The BoxShape function
+          it the constructor which creates a new object instance.
+      */
+    function BoxShape() {};
+
+    /*
+        The next lines use an mxCylinder instance to augment the
+        prototype of the shape ("inheritance") and reset the
+        constructor to the topmost function of the c'tor chain.
+    */
+    BoxShape.prototype = new mxCylinder();
+    BoxShape.prototype.constructor = BoxShape;
+
+    // Requests crisp rendering in SVG for this shape
+    BoxShape.prototype.crisp = true;
+
+    // Defines the extrusion of the box as a "static class variable"
+    BoxShape.prototype.extrude = 10;
+
+    /*
+        Next, the mxCylinder's redrawPath method is "overridden".
+        This method has a isForeground argument to separate two
+        paths, one for the background (which must be closed and
+        might be filled) and one for the foreground, which is
+        just a stroke.
+
+        Foreground:       /
+                    _____/
+                          |
+                          |
+                      ____  
+        Background:  /    | 
+                    /     | 
+                    |     / 
+                    |____/ 
+    */
+    BoxShape.prototype.redrawPath = function (path, x, y, w, h, isForeground) {
+      var dy = this.extrude * this.scale;
+      var dx = this.extrude * this.scale;
+
+      if (isForeground) {
+        path.moveTo(0, dy);
+        path.lineTo(w - dx, dy);
+        path.lineTo(w, 0);
+        path.moveTo(w - dx, dy);
+        path.lineTo(w - dx, h);
+        path.end();
+      } else {
+        path.moveTo(0, dy);
+        path.lineTo(dx, 0);
+        path.lineTo(w, 0);
+        path.lineTo(w, h - dy);
+        path.lineTo(w - dx, h);
+        path.lineTo(0, h);
+        path.lineTo(0, dy);
+        path.lineTo(dx, 0);
+        path.close();
+        path.end();
+      }
+    };
+
+    /*
+      The custom shape can be registered globally or in each cellRenderer
+      instance. In this example, the shape is registered globally. For
+      registering the shape in a cellRenderer instance, the following
+      code can be used:
+
+      graph.cellRenderer.registerShape('box', BoxShape);
+    */
+    console.dir(mxCellRenderer)
+    mxCellRenderer.defaultShapes['box'] = BoxShape;
+  </script>
+
+  <!-- <script type="text/javascript">
+      // 请求路径
+      let filePath = './xml/normal.xml'
+      // 获取graph容器
+      let container = document.getElementById('main')
+      // 异步加载xml，返回mxXmlRequest对象
+      mxUtils.get(filePath,onload,onerror)
+
+      function onload(req){
+        if(req.request.status !== 200){ return }
+        // Returns the document element of the response XML document
+        const root = req.getDocumentElement()
+        // Constructs an XML encoder/decoder for the specified owner document
+        const dec = new mxCodec(root.ownerDocument)
+        // Decodes the given XML node, return mxGraphModel instance
+        const model = dec.decode(root) 
+        let graph = new mxGraph(container,model,null,null)
+        // Specifies if the graph should allow any interactions
+        graph.setEnabled(false);
+        
+        // 获取 model
+        // The graph model acts as a wrapper around the cells which are in charge of storing the actual graph datastructure.
+        let cellModel = graph.getModel()
+
+        // 获取 mxCell
+        // Cells are the elements of the graph model.  They represent the state of the groups, vertices and edges in a graph.
+        let cells = cellModel.cells
+        
+        // 还可以通过mxGraph.prototype.setCellStyles进行样式的修改
+        // 椭圆
+        graph.setCellStyles('shadow',true,[cells[5]])
+        graph.setCellStyles('gradientColor','#ffffff',[cells[5]])
+        graph.setCellStyles('shape','box',[cells[5]])
+      }    
+    </script> -->
+
+  <script type="text/javascript">
+    // 获取graph容器
+    let container = document.getElementById('main')
+    var graph = new mxGraph(container);
+    graph.setEnabled(false);
+
+    // 设置修改默认STYLE_SHAPE为自定义的
+    var style = graph.getStylesheet().getDefaultVertexStyle();
+    style[mxConstants.STYLE_SHAPE] = 'box';
+
+    // 修改默认样式
+    style[mxConstants.STYLE_SPACING_TOP] = BoxShape.prototype.extrude;
+    style[mxConstants.STYLE_SPACING_RIGHT] = BoxShape.prototype.extrude;
+    style[mxConstants.STYLE_GRADIENTCOLOR] = '#FFFFFF';
+    style[mxConstants.STYLE_SHADOW] = true;
+
+    // Gets the default parent for inserting new cells. This
+    // is normally the first child of the root (ie. layer 0).
+    var parent = graph.getDefaultParent();
+
+    // Adds cells to the model in a single step
+    graph.getModel().beginUpdate();
+    try {
+      var v1 = graph.insertVertex(parent, null, 'Custom', 20, 20, 80, 60);
+      var v2 = graph.insertVertex(parent, null, 'Shape', 200, 150, 80, 60);
+      var e1 = graph.insertEdge(parent, null, '', v1, v2);
+    } finally {
+      // Updates the display
+      graph.getModel().endUpdate();
+    }
+  </script>
+</body>
+
+</html>

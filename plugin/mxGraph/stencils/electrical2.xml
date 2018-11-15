@@ -1,0 +1,88 @@
+<shapes name="mxGraph.electrical2">
+
+    <shape name="bus" h="5" w="90" aspect="variable" strokewidth="inherit">
+        <foreground>
+            <path>
+                <move x="0" y="2.5" />
+                <line x="90" y="2.5" />
+            </path>
+            <stroke />
+        </foreground>
+    </shape>
+
+    <shape aspect='variable' w='16' h='47' name='disconnector-sgd_dz1' id='sgd_dz1' strokewidth='inherit'>
+        <foreground>
+            <ellipse x='3.0' y='2.0' h='4.0' w='4.0'/>
+            <stroke/>
+            <ellipse x='3.0' y='41.0' h='4.0' w='4.0'/>
+            <stroke/>
+            <path>
+                <move x='5' y='35'/>
+                <line x='14' y='15'/>
+            </path>
+            <fillstroke/>
+            <ellipse x='2.0' y='6.0' h='6.0' w='6.0'/>
+            <stroke/>
+            <ellipse x='2.0' y='35.0' h='6.0' w='6.0'/>
+            <stroke/>
+            <ellipse x='2.0' y='6.0' h='6.0' w='6.0'/>
+            <stroke/>
+            <ellipse x='2.0' y='35.0' h='6.0' w='6.0'/>
+            <stroke/>
+        </foreground>
+        <connections>
+            <constraint name='0' perimeter='2' x='0.3125' y='0.0851063829787234'/>
+            <constraint name='1' perimeter='2' x='0.3125' y='0.9148936170212766'/>
+        </connections>
+    </shape>
+
+    <shape aspect='variable' w='18' h='36' name='cbreaker-sgd_kg1' id='sgd_kg1' strokewidth='inherit'>
+        <foreground>
+            <rect x='3' y='4' h='28' w='12'/>
+            <stroke/>
+            <rect x='3' y='4' h='28' w='12'/>
+            <stroke/>
+            <ellipse x='7.0' y='2.0' h='4.0' w='4.0'/>
+            <stroke/>
+            <ellipse x='7.0' y='30.0' h='4.0' w='4.0'/>
+            <stroke/>
+        </foreground>
+        <connections>
+            <constraint name='0' perimeter='2' x='0.5' y='0.1111111111111111'/>
+            <constraint name='1' perimeter='2' x='0.5' y='0.8888888888888888'/>
+        </connections>
+    </shape>
+
+    <shape name='disconnector-sgd_dz2' id='sgd_dz2' aspect='variable' w='48' h='16' strokewidth='inherit'>
+        <foreground>
+            <path>
+                <move x='10' y='11'/>
+                <line x='35' y='11'/>
+            </path>
+            <fillstroke/>
+            <ellipse x='2.0' y='9.0' h='4.0' w='4.0'/>
+            <stroke/>
+            <ellipse x='42.0' y='9.0' h='4.0' w='4.0'/>
+            <stroke/>
+            <path>
+                <move x='10' y='11'/>
+                <line x='34' y='2'/>
+            </path>
+            <fillstroke/>
+            <ellipse x='38.0' y='8.0' h='6.0' w='6.0'/>
+            <stroke/>
+            <ellipse x='4.0' y='8.0' h='6.0' w='6.0'/>
+            <stroke/>
+            <ellipse x='4.0' y='8.0' h='6.0' w='6.0'/>
+            <stroke/>
+            <ellipse x='38.0' y='8.0' h='6.0' w='6.0'/>
+            <stroke/>
+        </foreground>
+        <connections>
+            <constraint name='0' perimeter='1' x='0.08333333333333333' y='0.6875'/>
+            <constraint name='1' perimeter='1' x='0.9166666666666666' y='0.6875'/>
+        </connections>
+    </shape>
+
+
+</shapes>

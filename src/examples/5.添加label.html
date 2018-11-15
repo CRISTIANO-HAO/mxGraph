@@ -1,0 +1,91 @@
+<html>
+  <head>
+    <script type="text/javascript">
+      mxBasePath = '../../plugin/mxgraph'  
+    </script>
+    <script type="text/javascript" src="../../plugin/mxgraph/js/mxClient.js"></script>
+  </head>
+  <body>
+    <div id="main"></div>
+
+    <script type="text/javascript">
+      // 请求路径
+      let filePath = './xml/normal.xml'
+      // 获取graph容器
+      let container = document.getElementById('main')
+      // 异步加载xml，返回mxXmlRequest对象
+      mxUtils.get(filePath,onload,onerror)
+
+      function onload(req){
+        if(req.request.status !== 200){ return }
+        // Returns the document element of the response XML document
+        const root = req.getDocumentElement()
+        // Constructs an XML encoder/decoder for the specified owner document
+        const dec = new mxCodec(root.ownerDocument)
+        // Decodes the given XML node, return mxGraphModel instance
+        const model = dec.decode(root) 
+        let graph = new mxGraph(container,model,null,null)
+        // Specifies if the graph should allow any interactions
+        graph.setEnabled(false);
+        
+        // 获取 model
+        // The graph model acts as a wrapper around the cells which are in charge of storing the actual graph datastructure.
+        let cellModel = graph.getModel()
+
+        // 获取 mxCell
+        // Cells are the elements of the graph model.  They represent the state of the groups, vertices and edges in a graph.
+        let cells = cellModel.cells
+
+        // Removes folding icon for relative children
+				graph.isCellFoldable = function(cell, collapse)
+				{
+					var childCount = this.model.getChildCount(cell);
+					
+					for (var i = 0; i < childCount; i++)
+					{
+						var child = this.model.getChildAt(cell, i);
+						var geo = this.getCellGeometry(child);
+						
+						if (geo != null && geo.relative)
+						{
+							return false;
+						}
+					}					
+					// return childCount > 0;
+          return false
+				};
+        
+        // model的变化是事务性的，需要放在同一个事务中集中处理
+        graph.getModel().beginUpdate();
+
+        try{
+          // let label = graph.insertVertex(cells[5],null,'this is a laber inserted',0,0,0,0,'fontColor=red;fontSize=20;fillColor=red;')
+          // label.geometry.translate(60,70)
+          // label.setGeometry(label.geometry)
+
+          let label = graph.insertVertex(cells[5],null,'this is a laber inserted',0.5,1,0,0,'fontColor=red;fontSize=20;fillColor=red;')
+          // For vertices, this specifies the relative location inside the bounds of the parent cell
+          label.geometry.relative = true
+          // 设置偏移量
+          label.geometry.offset = new mxPoint(0, 10)
+
+          // var v2 = graph.insertVertex(cells[5], null, 'in', 0, 0.5, 20, 20, 'fontSize=9;shape=ellipse;resizable=0;');
+          // v2.geometry.offset = new mxPoint(-10, -10);
+          // v2.geometry.relative = true;
+          // var v3 = graph.insertVertex(cells[5], null, 'out', 1, 0.5, 20, 20, 'fontSize=9;shape=ellipse;resizable=0;');
+          // v3.geometry.offset = new mxPoint(-10, -10);
+          // v3.geometry.relative = true;
+        }finally{
+          graph.getModel().endUpdate();
+        }
+
+        
+        // 修改edge类型cell的值
+        cells[20].setValue('placeLabels')
+        cellModel.setStyle(cells[20],'fontSize=20;fontColor=green;fontStyle=1;align=left;verticalLabelPosition=left;')
+        console.log(cells[20])
+        graph.refresh()
+      }    
+    </script>
+  </body>
+</html>

@@ -1,0 +1,716 @@
+/**
+ * Created by taojingui on 2017/10/24.
+ */
+
+$('#personalwel a').text(getValueInTokenByName('nickName'));
+
+
+// 电网模型数据
+var modelBean;
+
+// Parses URL parameters. Supported parameters are:
+// - lang=xy: Specifies the language of the user interface.
+// - touch=1: Enables a touch-style user interface.
+// - storage=local: Enables HTML5 local storage.
+// - chrome=0: Chromeless mode.
+var urlParams = (function (url) {
+    var result = new Object();
+    var idx = url.lastIndexOf('?');
+
+    if (idx > 0) {
+        var params = url.substring(idx + 1).split('&');
+
+        for (var i = 0; i < params.length; i++) {
+            idx = params[i].indexOf('=');
+
+            if (idx > 0) {
+                result[params[i].substring(0, idx)] = params[i].substring(idx + 1);
+            }
+        }
+    }
+
+    return result;
+})(window.location.href);
+
+function initBreadCrumb() {
+    console.log(urlParams.netId);
+    var netId = urlParams.netId;
+    doAjax(commonurlStr + '/web/v2/powerModel/initBreadCrumb', 'get', {netId: netId}, function (data) {
+        var $brotherNets = $('<ul>', {class: 'dropdown-menu', roll: 'menu', 'aria-labelledby': 'dropdownMenu'});
+        var brotherNets = data.data.brotherNets;
+        console.log(brotherNets);
+        for (var i = 0; i < brotherNets.length; i++) {
+            if (brotherNets[i].netId != netId) {
+                $brotherNets.append($('<li>', {role: 'presentation'}).append($('<a>', {
+                    html: brotherNets[i].netName.substring(0, 10),
+                    role: 'menuitem',
+                    tabindex: '-1',
+                    href: './modelgraph.html?netId=' + brotherNets[i].netId,
+                    'title':brotherNets[i].netName
+                })))
+            }
+        }
+        $(".breadcrumb").empty();
+        $(".breadcrumb").append($('<li class="qnclound">').append($('<a>', {href: '../../index.html', html: '清能云'})));
+        $(".breadcrumb").append($('<li>').append($('<a>', {href: './modelManagement.html', html: '电网模型管理'})));
+        $(".breadcrumb").append(
+            $('<li>').append(
+                $('<a>', {
+                    html: data.data.net.netName.substring(0, 10),
+                    class: 'dropdown-toggle',
+                    id: 'dropdownMenu',
+                    'data-toggle': 'dropdown',
+                    'data-hover': 'dropdown',
+                    'title':data.data.net.netName
+                }).append(
+                    $('<span>', {class: 'caret'})
+                )
+            ).append(
+                $brotherNets
+            )
+        );
+    });
+}
+
+initBreadCrumb();
+// 加載电网模型图xml文件
+var loadGraphXmlFile = function (editorUI, filepath) {
+    var graph = editorUI.editor.graph;
+    var req = mxUtils.load(filepath);
+    if (filepath && filepath.length > 0 && req.request.status == 200) {
+        var root = req.getDocumentElement();
+        var dec = new mxCodec(root.ownerDocument);
+        dec.decode(root, graph.getModel());
+    }
+    else {
+        alert("尚未生成电网模型图");
+    }
+}
+
+/**
+ * 保存电网模型
+ */
+var saveModelGraph = function (editorUI, isSave) {
+
+    var netId = $("#netId").val();
+    var netName = $("#netName").val();
+    var periodNum = $("#periodNum").val();
+
+    var graph = editorUI.editor.graph;
+    if (graph.isEditing()) {
+        graph.stopEditing();
+    }
+
+    var xml = mxUtils.getXml(editorUI.editor.getGraphXml());
+    try {
+        $.confirm({
+            title: '',
+            content: '修改电网模型会清除该模型下的所有工程和方案，确定要修改模型吗？',
+            autoClose: 'cancel|6000',
+            buttons: {
+                保存: {
+                    text: '保存',
+                    action: function () {
+
+                        if (xml.length > MAX_REQUEST_SIZE) {
+                            mxUtils.alert(mxResources.get('drawingTooLarge'));
+                            mxUtils.popup(xml);
+                            return;
+                        }
+
+                        // 检查所有线路的两个节点都连上节点
+                        /*
+                         if (!checkLine(editorUI)) {
+                         return;
+                         }
+                         */
+
+                        // 检查所有元件的编码是否有重复
+                        if (!checkCode(editorUI)) {
+                            return;
+                        }
+
+                        // 检查所有属性是否存在空值
+                        if (!checkAttrValue(editorUI)) {
+                            return;
+                        }
+
+                        // 生成图片xml
+                        var bounds = graph.getGraphBounds();
+                        var scale = graph.view.scale;
+                        var zoomInput = 100; // 缩放比例
+                        var b = 10; // 边宽宽度
+                        var s = Math.max(0, parseFloat(zoomInput.value) || 100) / 100;
+                        var w = Math.ceil(bounds.width * s / graph.view.scale + 2 * b);  // 图片宽度
+                        var h = Math.ceil(bounds.height * s / graph.view.scale + 2 * b); // 图片高度
+
+                        var bounds = graph.getGraphBounds();
+
+                        // New image export
+                        var xmlDoc = mxUtils.createXmlDocument();
+                        var root = xmlDoc.createElement('output');
+                        xmlDoc.appendChild(root);
+
+                        // Renders graph. Offset will be multiplied with state's scale when painting state.
+                        var xmlCanvas = new mxXmlCanvas2D(root);
+                        xmlCanvas.translate(Math.floor((b / s - bounds.x) / graph.view.scale),
+                            Math.floor((b / s - bounds.y) / graph.view.scale));
+                        xmlCanvas.scale(s / graph.view.scale);
+
+                        var imgExport = new mxImageExport();
+                        imgExport.drawState(graph.getView().getState(graph.model.root), xmlCanvas);
+
+                        // Puts request data together
+                        var imageXml = mxUtils.getXml(root);
+                        doAjax(ROOT_PATH + "/web/modelgraph/save", 'post', {
+                            netId: netId,
+                            modelBean: encodeURIComponent(JSON.stringify(modelBean)),
+                            xml: encodeURIComponent(xml),
+                            image: encodeURIComponent(imageXml),
+                            w: w,
+                            h: h
+                        }, function (data) {
+                            var result = data.data;
+                            if (result.status == "success") {
+                                $.alert(
+                                    {
+                                        title: '',
+                                        content: '保存成功',
+                                        autoClose: 'ok|2000'
+                                    });
+                                // 保存成功后重新加载图和数据
+                                refresh(editorUI, netId, result.filepath);
+                            }
+                            else {
+                                $.alert({
+                                    title: '保存失败',
+                                    content: result.message,
+                                    autoClose: 'ok|2000'
+                                });
+                            }
+                        });
+                    }
+                },
+                取消: function () {
+                }
+            }
+        });
+    }
+
+    catch (e) {
+        editorUI.editor.setStatus(mxUtils.htmlEntities(mxResources.get('errorSavingFile')));
+    }
+};
+
+// 刷新电网模型图
+var refresh = function (editorUI, netId, filepath) {
+    loadGraphXmlFile(editorUI, filepath);
+    loadModelBean(netId);
+    editorUI.editor.setModified(false);
+}
+
+/**
+ * 加载电网模型数据
+ * @param netId
+ */
+var loadModelBean = function (netId) {
+    doAjax(ROOT_PATH + "/web/modelgraph/loadModelBean", 'get', {netId: netId}, function (data) {
+        modelBean = data.data;
+    });
+}
+
+function getJS(url){
+    $.ajax({
+        url: url,
+        async:false,
+        dataType: "script",
+        cache:true,
+        success: function(){}
+    });
+}
+
+/**
+ * 修改属性值
+ * @param cellId
+ * @param event
+ */
+var changeAttributeValue = function (editorUI, cellId, event) {
+
+    // 修改modelBean中对应的属性值
+    var attrName = $(event.target).attr("name");
+    var value = $(event.target).val();
+
+    if (!modelBean[cellId]) {
+        modelBean[cellId] = new Object();
+    }
+    modelBean[cellId][attrName] = value;
+
+    if (attrName.indexOf("Name") > -1) {
+        editorUI.editor.graph.getModel().getCell(cellId).value = value;
+        //labelPosition=left
+        editorUI.editor.graph.setCellStyles(mxConstants.STYLE_LABEL_POSITION, mxConstants.ALIGN_LEFT, editorUI.editor.graph.getSelectionCells());
+        editorUI.editor.graph.refresh();
+    }
+
+}
+
+/**
+ * 获取电网模型属性编辑框的信息
+ * @param type
+ * @return
+ */
+var getAttributePanel = function (type) {
+    getJS(commonurlStr+"/js/pmss/case/pmssCaseFunctions.js")
+    var selectOptions=(function (type) {
+        var result = null,
+            selectOptions=[];
+        if(type=="unit"){
+            result=getJqgridSelectByCategoryCdde(commonurlStr+"/web/pmssCase/getJqgridSeledct?categoryCdde=UNIT_TYPE");
+        }else if (type == "user") {
+            result=getJqgridSelectByCategoryCdde(commonurlStr+"/web/pmssCase/getJqgridSeledct?categoryCdde=USER_TYPE");
+
+        }else {
+
+        }
+
+        for(var code in result)
+            selectOptions.push({value:code,text:result[code]});
+        return selectOptions;
+    })(type);
+
+    var panels = [];
+    if (type == "unit") {
+        panels = [
+            {
+                name: '基础信息',
+                fields: [
+                    {
+                        fieldId: 'unitCode',
+                        fieldName: '机组编号',
+                        fieldType: 'input',
+                        unit: ''
+                    },
+                    {
+                        fieldId: 'unitName',
+                        fieldName: '机组名称',
+                        fieldType: 'input',
+                        unit: ''
+                    }, /*{
+                     fieldId : 'plant',
+                     fieldName : '所属电厂',
+                     fieldType : 'select',
+                     selectOptions : [
+                     {value:'1',text:'电厂1'},
+                     {value:'2',text:'电厂2'},
+                     {value:'3',text:'电厂3'},
+                     {value:'4',text:'电厂4'}
+                     ],
+                     unit : ''
+                     },*/ {
+                        fieldId: 'unitTypeId',
+                        fieldName: '机组类型',
+                        fieldType: 'select',
+                        // selectOptions: [
+                        //     {value: '101', text: '燃煤'},
+                        //     {value: '102', text: '燃油'},
+                        //     {value: '103', text: '燃气'},
+                        //     {value: '104', text: '核电'},
+                        //     {value: '201', text: '常规水电'},
+                        //     {value: '202', text: '小水电'},
+                        //     {value: '203', text: '风电'},
+                        //     {value: '301', text: '燃气'},
+                        //     {value: '302', text: '太阳能'},
+                        //     {value: '303', text: '其他类型新能源'},
+                        //     {value: '9', text: '其他'}
+                        // ],
+                        selectOptions:selectOptions,
+                        unit: ''
+                    },
+                    /*{
+                     fieldId : 'priceType',
+                     fieldName : '报价类型',
+                     fieldType : 'select',
+                     selectOptions : [
+                     {value:'1',text:'单一报价'},
+                     {value:'2',text:'分段报价'}
+                     ],
+                     unit : ''
+                     },*/
+                    {
+                        fieldId: 'maxCapacity',
+                        fieldName: '额定容量',
+                        fieldType: 'input',
+                        unit: 'MW'
+                    }, {
+                        fieldId: 'minCapacity',
+                        fieldName: '最小技术出力',
+                        fieldType: 'input',
+                        unit: 'MW'
+                    },
+                    //3-6日确认电网模型的爬坡速率去掉
+                    // {
+                    //     fieldId: 'incrate',
+                    //     fieldName: '上爬坡速率',
+                    //     fieldType: 'input',
+                    //     unit: ''
+                    // },
+                    {
+                        fieldId: 'avgcost',
+                        fieldName: '平均发电成本',
+                        fieldType: 'input',
+                        unit: '元/MWh'
+                    }
+                ]
+            },
+            /*{
+             name : '性能信息',
+             fields : [
+             {
+             fieldId : 'startCost',
+             fieldName : '启动费用',
+             fieldType : 'input',
+             unit : ''
+             },{
+             fieldId : 'offCost',
+             fieldName : '停机费用',
+             fieldType : 'input',
+             unit : ''
+             },{
+             fieldId : 'avgcost',
+             fieldName : '平均发电成本',
+             fieldType : 'input',
+             unit : ''
+             },{
+             fieldId : 'minOnTime',
+             fieldName : '最小运行时间',
+             fieldType : 'input',
+             unit : ''
+             },{
+             fieldId : 'maxOnTime',
+             fieldName : '最大运行时间',
+             fieldType : 'input',
+             unit : ''
+             },{
+             fieldId : 'incrate',
+             fieldName : '上爬坡速率',
+             fieldType : 'input',
+             unit : ''
+             },{
+             fieldId : 'decRate',
+             fieldName : '下爬坡速率',
+             fieldType : 'input',
+             unit : ''
+             }
+             ]
+             }
+             */
+        ];
+    }
+    else if (type == "user") {
+        panels = [
+            {
+                name: '基础信息',
+                fields: [
+                    {
+                        fieldId: 'userCode',
+                        fieldName: '用户编号',
+                        fieldType: 'input',
+                        unit: ''
+                    },
+                    {
+                        fieldId: 'userName',
+                        fieldName: '用户名称',
+                        fieldType: 'input',
+                        unit: ''
+                    }, {
+                        fieldId: 'type',
+                        fieldName: '用户类型',
+                        fieldType: 'select',
+                        selectOptions:selectOptions,
+                        unit: ''
+                    },
+                    /*{
+                     fieldId : 'priceType',
+                     fieldName : '报价类型',
+                     fieldType : 'select',
+                     selectOptions : [
+                     {value:'1',text:'单一报价'},
+                     {value:'2',text:'分段报价'}
+                     ],
+                     unit : ''
+                     },{
+                     fieldId : 'priceTypeNum',
+                     fieldName : '',
+                     fieldType : 'input',
+                     unit : '段'
+                     },
+                     {
+                     fieldId : 'loadCurve',
+                     fieldName : '负荷曲线',
+                     fieldType : 'select',
+                     selectOptions : [
+                     {value:'1',text:'单一值'},
+                     {value:'2',text:'负荷曲线'}
+                     ],
+                     unit : ''
+                     }
+                     */
+                ]
+            }
+        ];
+    }
+    else if (type == "line") {
+        console.log('line')
+        panels = [
+            {
+                name: '基础信息',
+                fields: [
+                    {
+                        fieldId: 'lineCode',
+                        fieldName: '线路编号',
+                        fieldType: 'input',
+                        unit: ''
+                    },
+                    {
+                        fieldId: 'lineName',
+                        fieldName: '线路名称',
+                        fieldType: 'input',
+                        unit: ''
+                    },
+                    //3-6暂时没有电压等级这个字段
+                    // {
+                    //     fieldId: 'voltage',
+                    //     fieldName: '电压等级',
+                    //     fieldType: 'input',
+                    //     unit: ''
+                    // },
+                    {
+                        fieldId: 'r',
+                        fieldName: '支路电阻标幺值',
+                        fieldType: 'input',
+                        unit: ''
+                    }, {
+                        fieldId: 'x',
+                        fieldName: '支路电抗标幺值',
+                        fieldType: 'input',
+                        unit: ''
+                    }, {
+                        fieldId: 'bcs',
+                        fieldName: '支路1/2充电<br>电纳标幺值',
+                        fieldType: 'input',
+                        unit: ''
+                    }, {
+                        fieldId: 'transCapcity',
+                        fieldName: '额定传输容量',
+                        fieldType: 'input',
+                        unit: 'MW'
+                    }
+                ]
+            },
+            /*{
+             name : '节点信息',
+             fields : [
+             {
+             fieldId : 'beginPnodeCode',
+             fieldName : '首节点编号',
+             fieldType : 'input',
+             unit : ''
+             },{
+             fieldId : 'beginPnodeName',
+             fieldName : '首节点名称',
+             fieldType : 'input',
+             unit : ''
+             },{
+             fieldId : 'endPnodeCode',
+             fieldName : '末节点编号',
+             fieldType : 'input',
+             unit : ''
+             },{
+             fieldId : 'endPnodeName',
+             fieldName : '末节点名称',
+             fieldType : 'input',
+             unit : ''
+             }
+             ]
+             }
+             */
+        ];
+    }
+    else if (type == "node") { // 节点
+        panels = [
+            {
+                name: '节点信息',
+                fields: [
+                    {
+                        fieldId: 'pnodeCode',
+                        fieldName: '节点编号',
+                        fieldType: 'input',
+                        unit: ''
+                    }, {
+                        fieldId: 'pnodeName',
+                        fieldName: '节点名称',
+                        fieldType: 'input',
+                        unit: ''
+                    }
+                ]
+            }
+        ];
+    }
+
+    return panels;
+}
+
+// 检查连接线是否两端都连接上其他节点
+var checkLine = function (editorUI) {
+
+    for (var cellId in editorUI.editor.graph.getModel().cells) {
+        var cell = editorUI.editor.graph.getModel().cells[cellId];
+        if (cell.style && cell.style.indexOf("edge") > -1) {
+            if (!cell.source || !cell.target) {
+                alert("线路存在未连接的节点，请检查是否连接正确");
+                editorUI.editor.graph.selectCellForEvent(editorUI.editor.graph.getModel().getCell(cellId), mxEvent.CLICK);
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+// 检查元件编号是否有重复
+var checkCode = function (editorUI) {
+    var codes = [];
+    for (var cellId in editorUI.editor.graph.getModel().cells) {
+
+        if (modelBean[cellId]) {
+            var code;
+            if (modelBean[cellId].unitCode) {
+                code = modelBean[cellId].unitCode + 'unit';
+            }
+            else if (modelBean[cellId].userCode) {
+                code = modelBean[cellId].userCode + 'user';
+            }
+            else if (modelBean[cellId].lineCode) {
+                code = modelBean[cellId].lineCode + 'line';
+            }
+            else if (modelBean[cellId].pnodeCode) {
+                code = modelBean[cellId].pnodeCode + 'node';
+            }
+            if (code && $.inArray(code, codes) > -1) {
+                alert("存在重复编号，请修改编号");
+                editorUI.editor.graph.selectCellForEvent(editorUI.editor.graph.getModel().getCell(cellId), mxEvent.CLICK);
+                return false;
+            }
+            if (code) {
+                codes.push(code);
+            }
+        }
+
+    }
+
+    return true;
+}
+
+// 检查所有的属性是否存在空值
+var checkAttrValue = function (editorUI) {
+    for (var cellId in editorUI.editor.graph.getModel().cells) {
+        for (var key in modelBean[cellId]) {
+            if (key == 'subTypeId' || key == 'pnodeId' || key == 'pnodeCode' || key == 'pnodeType' || key == 'netId') { // 忽略一些属性
+                continue;
+            }
+            //爬坡速率和电压等级去掉
+            if (key == 'incrate' || key == 'voltage') {
+                continue;
+            }
+            if (modelBean[cellId][key] == null || modelBean[cellId][key] === "" || $.trim(modelBean[cellId][key]).length == 0) {
+                console.log(cellId, key, modelBean[cellId][key], modelBean[cellId][key] == null, modelBean[cellId][key] == "", $.trim(modelBean[cellId][key]).length == 0);
+                alert("属性存在空值，请填写完整");
+                editorUI.editor.graph.selectCellForEvent(editorUI.editor.graph.getModel().getCell(cellId), mxEvent.CLICK);
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+
+// 打开新建模型框
+var openNewModel = function (editorUI) {
+    var div = document.createElement("div");
+    $(div).load(ROOT_PATH + '/web/modelgraph/model/newModelForm.jsp');
+    editorUI.dialogs = editorUI.dialogs || [];
+    var dialog = new Dialog(editorUI, div, 300, 300, true, true);
+    editorUI.dialogs.push(dialog);
+}
+
+// 创建模型
+var createModel = function () {
+    var netName = $("#netName").val();
+    var periodNum = $("#periodNum").val();
+    doAjax(ROOT_PATH + "/web/modelgraph/createModel", 'post', {
+        netName: netName,
+        periodNum: periodNum
+    }, function (data) {
+        var result = data.data;
+        if (result.status == "success") {
+            alert("创建成功！");
+            window.location.href = ROOT_PATH + '/web/modelgraph/open?netId=' + result.netId;
+        }
+        else {
+            alert("创建失败！" + result.message);
+        }
+    });
+}
+
+// 打开模型列表
+var openModelList = function (editorUI) {
+    var div = document.createElement("div");
+    $(div).load(ROOT_PATH + '/web/modelgraph/modelList');
+    editorUI.dialogs = editorUI.dialogs || [];
+    var dialog = new Dialog(editorUI, div, 300, 300, true, true);
+    editorUI.dialogs.push(dialog);
+}
+
+// 打开模型另存为页面
+var openSaveAsModel = function (editorUI) {
+    var div = document.createElement("div");
+    $(div).load(ROOT_PATH + '/web/modelgraph/model/saveAsModelForm.jsp');
+    editorUI.dialogs = editorUI.dialogs || [];
+    var dialog = new Dialog(editorUI, div, 300, 300, true, true);
+    editorUI.dialogs.push(dialog);
+}
+
+// 模型另存为
+var saveAsModel = function () {
+
+    var netName = $("#netName").val();
+    var periodNum = $("#periodNum").val();
+
+    // 检查所有元件的编码是否有重复
+    if (!checkCode(editorUI)) {
+        return;
+    }
+
+    // 检查所有属性是否存在空值
+    if (!checkAttrValue(editorUI)) {
+        return;
+    }
+    doAjax(ROOT_PATH + "/web/modelgraph/save", 'post', {
+        netId: netId,
+        modelBean: encodeURIComponent(JSON.stringify(modelBean)),
+        xml: encodeURIComponent(xml)
+    }, function (data) {
+        var result = data.data;
+        if (result.status == "success") {
+            alert("保存成功！");
+            // 保存成功后重新加载图和数据
+            refresh(editorUI, netId, result.filepath);
+        }
+        else {
+            alert("保存失败！" + result.message);
+        }
+    });
+
+    editorUI.editor.setModified(false);
+}

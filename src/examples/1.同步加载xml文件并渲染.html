@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <script type="text/javascript">
+      mxBasePath = '../../plugin/mxgraph'  
+    </script>
+    <script type="text/javascript" src="../../plugin/mxgraph/js/mxClient.js"></script>
+  </head>
+  <body>
+    <div id="main"></div>
+
+    <script type="text/javascript">
+      // 请求路径
+      let filePath = './xml/normal.xml'
+      // 获取graph容器
+      let container = document.getElementById('main')
+      // 同步加载xml，返回mxXmlRequest对象
+      const req = mxUtils.load(filePath)
+      
+      if (filePath && filePath.length > 0 && req.request.status === 200) {
+        // Returns the document element of the response XML document
+        const root = req.getDocumentElement()
+        // Constructs an XML encoder/decoder for the specified owner document
+        const dec = new mxCodec(root.ownerDocument)
+        // Decodes the given XML node, return mxGraphModel instance
+        const model = dec.decode(root) 
+        let graph = new mxGraph(container,model,null,null)      
+      }
+      
+    </script>
+  </body>
+</html>
