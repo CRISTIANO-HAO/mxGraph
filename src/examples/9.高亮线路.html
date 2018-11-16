@@ -43,6 +43,7 @@
     let filePath = './xml/model.xml'
     // let filePath = './xml/data.xml'
     // let filePath = './xml/8.xml'
+    // let filePath = './xml/9.xml'
     // 获取graph容器
     let container = document.getElementById('main')
     // 异步加载xml，返回mxXmlRequest对象
@@ -70,7 +71,7 @@
         let model = dec.decode(root, editorUI.editor.graph.getModel());
         let graph = editorUI.editor.graph;
 
-        highlightGraphLine(graph)
+        highlightGraphLine(graph, true)
 
         addCellCursor(graph)
 
@@ -81,39 +82,158 @@
     }
 
     // 高亮line
-    function highlightGraphLine(graph) {
+    function highlightGraphLine(graph, toggle) {
       let view = graph.view
-      let cells = getCellsArr(graph.getModel().cells)
+      let cells = getCellsArr(graph.getModel().cells);
+      let model = graph.model
+      let lastStyle = null
+      let lastCell = null
 
-      graph.addListener(mxEvent.CLICK, function (cell) {
-        console.log(cell)
-      })
+      graph.click = function (evt) {
+        // 获取cell
+        let cell = evt.getCell()
+        if (!cell) {
+          return
+        }
+
+        if (cell.isEdge()) {
+          resetPosition(this, cell)
+          setEdgeCellStyle(cell)
+        }
+      }
+
+      // 设置线路样式
+      function setEdgeCellStyle(cell) {
+        let style = ''
+        // 点击不同cell
+        if (lastCell !== cell) {
+          // 重置默认样式
+          if (lastCell) {
+            model.setStyle(lastCell, lastStyle)
+          }
+          lastCell = cell
+          lastStyle = model.getStyle(cell)
+
+          // 需要新变量接收，否则lastStyle会被 mxUtils.setStyle方法改变
+          style = getChangeStyle(lastStyle)
+          graph.setCellStyle(style, [cell])
+
+        } else if (toggle) { // 重复点击是否需要切换样式
+          style = model.getStyle(cell)
+          if (style === lastStyle) {
+            style = getChangeStyle(lastStyle)
+          } else {
+            style = lastStyle
+          }
+          graph.setCellStyle(style, [cell])
+        } else {
+          // 该api有bug
+          // graph.toggleCellStyle(mxConstants.STYLE_STROKECOLOR,'#666',cell)
+          // graph.toggleCellStyle(mxConstants.STYLE_STROKEWIDTH,'20',cell)
+        }
+      }
     }
 
-    // 设置悬浮形状
-    function addCellCursor(graph){
+    // 重置高亮线路的位置
+    function resetPosition(graph, cell) {
+      let view = graph.view
+      let x, y
+      let point = getContainerCentralPoint(graph)
+
+      if (cell.isEdge()) {
+        x = cell.geometry.points[0]['x']
+        y = cell.geometry.points[0]['y']
+      }
+      view.setTranslate(point.x - x, point.y - y)
+    }
+
+    // 返回容器中间点
+    function getContainerCentralPoint(graph) {
+      let container = graph.container
+      return {
+        x: container.clientWidth / 3,
+        y: container.clientHeight / 5
+      }
+    }
+
+    // 返回改变的样式
+    function getChangeStyle(style) {
+      style = mxUtils.setStyle(style, mxConstants.STYLE_STROKECOLOR, 'red');
+      style = mxUtils.setStyle(style, mxConstants.STYLE_STROKEWIDTH, "2");
+      return style
+    }
+
+    // 设置鼠标悬浮形状
+    function addCellCursor(graph) {
       let track = new mxCellTracker(graph);
       track.mouseMove = function (sender, evt) {
         // 获取cell
         let cell = evt.getCell()
-        if(!cell){
+        if (!cell) {
           return
         }
 
         // 获取cell对应的mxCellState实例
         let state = evt.getState()
-        if(cell.isEdge()){
+        if (cell.isEdge()) {
           state.setCursor('move');
-        }else if(cell.isVertex()){
+        } else if (cell.isVertex()) {
           state.setCursor('pointer');
         }
       }
     }
 
-    function getCellsArr(cells) {
+    // 区分cell
+    function filterOtherCellsByCells(graph, cells, type, keyWord) {
+      let originCells = getCellsArr(graph.model.cells, type, keyWord)
+      if (!cells) {
+        return originCells
+      }
+      if (cells instanceof Array) {
+        let arr = []
+        originCells.forEach((item) => {
+          if (!cells.includes(item)) {
+            arr.push(item)
+          }
+        })
+        return arr
+      }
+      if (cells instanceof mxCell) {
+        originCells.splice(originCells.indexOf(cells), 1)
+        return originCells
+      }
+    }
+
+    // 获取cells数组
+    function getCellsArr(cells, type, keyWord) {
       let arr = []
+      let value = ''
+      type = type ? type.toLowerCase() : ''
+      let method = type ? (type === 'edge' ? mxCell.prototype.isEdge : (type === 'vertex' ? mxCell.prototype.isVertex :
+        null)) : null
       for (let key in cells) {
-        arr.push(cells[key])
+        if (type === '') {
+          arr.push(cells[key])
+        } else {
+          if (method) {
+            if (method.call(cells[key])) {
+              if (keyWord) {
+                value = cells[key]['value'] || ''
+                console.log(value)
+                if (typeof value !== 'string') {
+                  value = ''
+                }
+                if (value.toLowerCase().indexOf(keyWord.toLowerCase()) >= 0) {
+                  arr.push(cells[key])
+                }
+              } else {
+                arr.push(cells[key])
+              }
+            }
+          } else {
+            arr.push(cells[key])
+          }
+        }
       }
       return arr
     }
