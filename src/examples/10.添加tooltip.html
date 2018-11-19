@@ -73,6 +73,9 @@
         let model = dec.decode(root, editorUI.editor.graph.getModel());
         let graph = editorUI.editor.graph;
 
+        // 开启提示
+        graph.setTooltips(true);
+
         highlightGraphLine(graph, true)
 
         addCellCursor(graph)
@@ -86,21 +89,21 @@
     // 高亮line
     function highlightGraphLine(graph, toggle) {
       let view = graph.view
-      let cells = getCellsArr(graph.getModel().cells);
       let model = graph.model
       let lastStyle = null
       let lastCell = null
-      let offset = getContainerOffset(graph)
+      let cellChild = []
 
       graph.click = function (evt) {
         // 获取cell
         let cell = evt.getCell()
+        addVertex(evt,graph,cell,cellChild)
         if (!cell) {
           return
         }
 
         if (cell.isEdge()) {
-          resetLinePosition(this, cell, offset)
+          // resetLinePosition(this, cell)
           setEdgeCellStyle(cell)
         }
       }
@@ -137,8 +140,35 @@
       }
     }
 
+    // 插入vertex
+    function addVertex(evt,graph,cell,cellChild){
+      // 删除添加的cell
+      graph.removeCells(cellChild)
+      // 清空数组
+      cellChild.splice(0,cellChild.length)
+      // 当cell为edge时才继续
+      if(cell === null || cell.isVertex()){
+        return
+      }
+      let { x, y } = getToolTipPosition(evt,graph)
+      let child = graph.insertVertex(cell,null,'hello workd', x, y)
+      cellChild.push(child)
+      graph.refresh()
+    }
+
+    // 获取tooltip位置
+    function getToolTipPosition(evt,graph){
+      let { graphX, graphY}  = evt
+      let style = graph.container.children[0]['style']
+      let scale = graph.view.getScale()
+      return {
+        x: graphX/scale - Number(style['left'].slice(0,-2)) * scale,
+        y: graphY/scale - Number(style['top'].slice(0,-2)) * scale
+      }
+    }
+
     // 重置高亮线路的位置
-    function resetLinePosition(graph, cell, offset) {
+    function resetLinePosition(graph, cell) {
       let view = graph.view
       let container = graph.container
       let geometry = cell.geometry
@@ -156,32 +186,11 @@
           x = geometry.x + geometry.width * 0.5
           y = geometry.y + geometry.height * 0.5
         }
-        x = x * scale - Number(style['width'].slice(0,-2)) * 0.5
-        y = y * scale - Number(style['height'].slice(0,-2)) * 0.5
+        x = x * scale - Number(style['width'].slice(0, -2)) * 0.5
+        y = y * scale - Number(style['height'].slice(0, -2)) * 0.5
       }
       container.scrollLeft = x
       container.scrollTop = y
-    }
-
-    // 返回容器偏移位置
-    function getContainerOffset(graph) {
-      let view = graph.view
-      let container = graph.container
-      let left = container.children[0].style.left
-      let top = container.children[0].style.top
-      return {
-        left: Number(left.slice(0, -2)),
-        top: Number(top.slice(0, -2))
-      }
-    }
-
-    // 返回容器中间点
-    function getContainerCentralPoint(graph) {
-      let container = graph.container
-      return {
-        x: container.clientWidth / 2,
-        y: container.clientHeight / 2
-      }
     }
 
     // 返回改变的样式
@@ -209,61 +218,6 @@
           state.setCursor('pointer');
         }
       }
-    }
-
-    // 区分cell
-    function filterOtherCellsByCells(graph, cells, type, keyWord) {
-      let originCells = getCellsArr(graph.model.cells, type, keyWord)
-      if (!cells) {
-        return originCells
-      }
-      if (cells instanceof Array) {
-        let arr = []
-        originCells.forEach((item) => {
-          if (!cells.includes(item)) {
-            arr.push(item)
-          }
-        })
-        return arr
-      }
-      if (cells instanceof mxCell) {
-        originCells.splice(originCells.indexOf(cells), 1)
-        return originCells
-      }
-    }
-
-    // 获取cells数组
-    function getCellsArr(cells, type, keyWord) {
-      let arr = []
-      let value = ''
-      type = type ? type.toLowerCase() : ''
-      let method = type ? (type === 'edge' ? mxCell.prototype.isEdge : (type === 'vertex' ? mxCell.prototype.isVertex :
-        null)) : null
-      for (let key in cells) {
-        if (type === '') {
-          arr.push(cells[key])
-        } else {
-          if (method) {
-            if (method.call(cells[key])) {
-              if (keyWord) {
-                value = cells[key]['value'] || ''
-                console.log(value)
-                if (typeof value !== 'string') {
-                  value = ''
-                }
-                if (value.toLowerCase().indexOf(keyWord.toLowerCase()) >= 0) {
-                  arr.push(cells[key])
-                }
-              } else {
-                arr.push(cells[key])
-              }
-            }
-          } else {
-            arr.push(cells[key])
-          }
-        }
-      }
-      return arr
     }
   </script>
 </body>
