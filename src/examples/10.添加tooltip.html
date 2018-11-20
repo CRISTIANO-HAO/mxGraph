@@ -40,12 +40,12 @@
 
   <script type="text/javascript">
     // 请求路径
-    let filePath = './xml/model.xml'
+    // let filePath = './xml/model.xml'
     // let filePath = './xml/data.xml'
     // let filePath = './xml/8.xml'
     // let filePath = './xml/9.xml'
     // let filePath = './xml/10.xml'
-    // let filePath = './xml/11.xml'
+    let filePath = './xml/11.xml'
     // 获取graph容器
     let container = document.getElementById('main')
     // 异步加载xml，返回mxXmlRequest对象
@@ -73,10 +73,7 @@
         let model = dec.decode(root, editorUI.editor.graph.getModel());
         let graph = editorUI.editor.graph;
 
-        // 开启提示
-        graph.setTooltips(true);
-
-        highlightGraphLine(graph, true)
+        highlightGraphLine(graph, false)
 
         addCellCursor(graph)
 
@@ -95,21 +92,23 @@
       let cellChild = []
 
       graph.click = function (evt) {
+        // 删除toolTip
+        removeToolTip(graph, cellChild)
         // 获取cell
         let cell = evt.getCell()
-        addVertex(evt,graph,cell,cellChild)
-        if (!cell) {
-          return
-        }
-
-        if (cell.isEdge()) {
-          // resetLinePosition(this, cell)
-          setEdgeCellStyle(cell)
-        }
+        setEdgeCellStyle(cell)
+        addToolTip(evt, graph, cellChild)
+        resetLinePosition(evt, graph, cell)
       }
 
       // 设置线路样式
       function setEdgeCellStyle(cell) {
+        if(!cell || cell.isVertex()){
+          lastCell && model.setStyle(lastCell, lastStyle)
+          lastCell = null
+          lastStyle = null
+          return 
+        }
         let style = ''
         // 点击不同cell
         if (lastCell !== cell) {
@@ -140,63 +139,90 @@
       }
     }
 
-    // 插入vertex
-    function addVertex(evt,graph,cell,cellChild){
+    // 插入toolTip
+    function addToolTip(evt, graph, cellChild) {
+      // 删除toolTip
+      removeToolTip(graph, cellChild)
+      // 当cell为edge时才继续
+      let cell = evt.getCell()
+      if (cell === null || cell.isVertex()) {
+        return
+      }
+      // 确定toolTip位置
+      let {
+        x,
+        y
+      } = getClickPosition(evt, graph)
+
+      //间接修改样式
+      let style = {};
+      // style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CLOUD;
+      style[mxConstants.STYLE_STROKECOLOR] = '#fff';
+      style[mxConstants.STYLE_FONTCOLOR] = '#fff';
+      style[mxConstants.STYLE_FILLCOLOR] = '#e28080';
+      // style[mxConstants.STYLE_GRADIENTCOLOR] = 'white';
+      style[mxConstants.STYLE_ROUNDED] = true;
+      style[mxConstants.SHADOW_OPACITY] = 0;
+      style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
+      graph.getStylesheet().putCellStyle('toolTipCSS', style)
+    
+      graph.getModel().beginUpdate()
+      try {
+        let father = graph.insertVertex(cell, null, null, x - 100, y - 100, null, null, 'opacity=0;')
+        for (let i = 0; i < 4; i++) {
+          let child = graph.insertVertex(father, null, 'hello world welcome', 0, 30 * i, 150, 30, 'toolTipCSS')
+          cellChild.push(child)
+        }
+        cellChild.push(father)
+      } finally {
+        graph.getModel().endUpdate()
+      }
+      // 非常耗性能，禁止使用
+      // graph.refresh()
+    }
+
+    // 删除toolTip
+    function removeToolTip(graph, cellChild) {
       // 删除添加的cell
       graph.removeCells(cellChild)
       // 清空数组
-      cellChild.splice(0,cellChild.length)
-      // 当cell为edge时才继续
-      if(cell === null || cell.isVertex()){
-        return
-      }
-      let { x, y } = getToolTipPosition(evt,graph)
-      let child = graph.insertVertex(cell,null,'hello workd', x, y)
-      cellChild.push(child)
-      graph.refresh()
+      cellChild.splice(0, cellChild.length)
     }
 
-    // 获取tooltip位置
-    function getToolTipPosition(evt,graph){
-      let { graphX, graphY}  = evt
+    // 获取点击位置
+    function getClickPosition(evt, graph) {
+      let {
+        graphX,
+        graphY
+      } = evt
       let style = graph.container.children[0]['style']
       let scale = graph.view.getScale()
+      // 返回scale为1时的位置
       return {
-        x: graphX/scale - Number(style['left'].slice(0,-2)) * scale,
-        y: graphY/scale - Number(style['top'].slice(0,-2)) * scale
+        x: graphX / scale - Number(style['left'].slice(0, -2)) * scale,
+        y: graphY / scale - Number(style['top'].slice(0, -2)) * scale
       }
     }
 
     // 重置高亮线路的位置
-    function resetLinePosition(graph, cell) {
-      let view = graph.view
+    function resetLinePosition(evt, graph, cell) {
+      if(!cell || cell.isVertex()){ return }
+      let { x, y } = getClickPosition(evt, graph)
       let container = graph.container
-      let geometry = cell.geometry
-      let scale = view.getScale()
-      let x, y
-      let style = window.getComputedStyle(container)
-
-      if (cell.isEdge()) {
-        if (geometry.points.length > 0) {
-          let startPoint = geometry.points[0]
-          let endPoint = geometry.points[geometry.points.length - 1]
-          x = (startPoint.x + endPoint.x) * 0.5
-          y = (startPoint.y + endPoint.y) * 0.5
-        } else {
-          x = geometry.x + geometry.width * 0.5
-          y = geometry.y + geometry.height * 0.5
-        }
-        x = x * scale - Number(style['width'].slice(0, -2)) * 0.5
-        y = y * scale - Number(style['height'].slice(0, -2)) * 0.5
-      }
-      container.scrollLeft = x
-      container.scrollTop = y
+      let scale = graph.view.getScale()
+      let { clientWidth, clientHeight } = container
+      // 返回缩放后的位置
+      let scrollX = x*scale >= clientWidth/2 ? x*scale - clientWidth/2 : 0
+      let scrollY = y*scale >= clientHeight/2 ? y*scale - clientHeight/2 : 0
+      container.scrollLeft = scrollX
+      container.scrollTop = scrollY
     }
 
     // 返回改变的样式
     function getChangeStyle(style) {
       style = mxUtils.setStyle(style, mxConstants.STYLE_STROKECOLOR, 'red');
       style = mxUtils.setStyle(style, mxConstants.STYLE_STROKEWIDTH, "2");
+      style = mxUtils.setStyle(style, mxConstants.STYLE_ELBOW, "elbow");
       return style
     }
 
@@ -213,9 +239,9 @@
         // 获取cell对应的mxCellState实例
         let state = evt.getState()
         if (cell.isEdge()) {
-          state.setCursor('move');
-        } else if (cell.isVertex()) {
           state.setCursor('pointer');
+        } else if (cell.isVertex()) {
+          state.setCursor('move');
         }
       }
     }
