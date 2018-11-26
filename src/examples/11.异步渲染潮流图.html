@@ -72,6 +72,8 @@
         let dec = new mxCodec(root.ownerDocument);
         let model = dec.decode(root, editorUI.editor.graph.getModel());
         let graph = editorUI.editor.graph;
+        // 禁止一些默认设置
+        graph.setEnabled(false)
 
         highlightGraphLine(graph, false)
 
@@ -103,11 +105,11 @@
 
       // 设置线路样式
       function setEdgeCellStyle(cell) {
-        if(!cell || cell.isVertex()){
+        if (!cell || cell.isVertex()) {
           lastCell && model.setStyle(lastCell, lastStyle)
           lastCell = null
           lastStyle = null
-          return 
+          return
         }
         let style = ''
         // 点击不同cell
@@ -131,11 +133,7 @@
             style = lastStyle
           }
           graph.setCellStyle(style, [cell])
-        } else {
-          // 该api有bug
-          // graph.toggleCellStyle(mxConstants.STYLE_STROKECOLOR,'#666',cell)
-          // graph.toggleCellStyle(mxConstants.STYLE_STROKEWIDTH,'20',cell)
-        }
+        } else {}
       }
     }
 
@@ -165,7 +163,7 @@
       style[mxConstants.SHADOW_OPACITY] = 0;
       style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
       graph.getStylesheet().putCellStyle('toolTipCSS', style)
-    
+
       graph.getModel().beginUpdate()
       try {
         let father = graph.insertVertex(cell, null, null, x - 100, y - 100, null, null, 'opacity=0;')
@@ -206,14 +204,22 @@
 
     // 重置高亮线路的位置
     function resetLinePosition(evt, graph, cell) {
-      if(!cell || cell.isVertex()){ return }
-      let { x, y } = getClickPosition(evt, graph)
+      if (!cell || cell.isVertex()) {
+        return
+      }
+      let {
+        x,
+        y
+      } = getClickPosition(evt, graph)
       let container = graph.container
       let scale = graph.view.getScale()
-      let { clientWidth, clientHeight } = container
+      let {
+        clientWidth,
+        clientHeight
+      } = container
       // 返回缩放后的位置，需按照scale进行缩放
-      let scrollX = x*scale >= clientWidth/2 ? x*scale - clientWidth/2 : 0
-      let scrollY = y*scale >= clientHeight/2 ? y*scale - clientHeight/2 : 0
+      let scrollX = x * scale >= clientWidth / 2 ? x * scale - clientWidth / 2 : 0
+      let scrollY = y * scale >= clientHeight / 2 ? y * scale - clientHeight / 2 : 0
       container.scrollLeft = scrollX
       container.scrollTop = scrollY
     }

@@ -2,11 +2,13 @@
 
 ## 准备
 
-#### 获取mxGraph
-mxGraph的获取非常简单，可从[GitHub项目](https://github.com/jgraph/mxgraph)下载，也可以通过npm进行下载：
+### 启动
 
 ```js
-npm install mxgraph --save
+// 安装http-server
+npm install
+// 启动
+npm run start
 ```
 
 #### 引入mxGraph
