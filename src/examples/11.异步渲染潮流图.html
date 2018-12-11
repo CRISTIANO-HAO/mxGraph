@@ -40,12 +40,13 @@
 
   <script type="text/javascript">
     // 请求路径
-    let filePath = './xml/model.xml'
+    // let filePath = './xml/model.xml'
     // let filePath = './xml/data.xml'
     // let filePath = './xml/8.xml'
     // let filePath = './xml/9.xml'
     // let filePath = './xml/10.xml'
     // let filePath = './xml/11.xml'
+    let filePath = './xml/12.xml'
     // 获取graph容器
     let container = document.getElementById('main')
     // 异步加载xml，返回mxXmlRequest对象
@@ -73,7 +74,12 @@
         let model = dec.decode(root, editorUI.editor.graph.getModel());
         let graph = editorUI.editor.graph;
         // 禁止一些默认设置
-        graph.setEnabled(false)
+        // graph.setEnabled(false)
+
+        // for (let key in model.cells) {
+        //   model.cells[key].setValue('')
+        // }
+        // graph.refresh()
 
         highlightGraphLine(graph, false)
 

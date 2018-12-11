@@ -7,7 +7,7 @@
     "example": "examples"
   },
   "scripts": {
-    "start": "http-server -a 0.0.0.0 -p 8008"
+    "start": "http-server -a 0.0.0.0 -p 8008 -o"
   },
   "author": "haotengfei",
   "license": "ISC",
